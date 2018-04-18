@@ -10,6 +10,9 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
 import android.view.View;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
+import android.view.animation.LinearInterpolator;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
@@ -20,6 +23,7 @@ import com.google.zxing.WriterException;
 import com.yanzhenjie.permission.Action;
 import com.yanzhenjie.permission.AndPermission;
 import com.yanzhenjie.permission.Permission;
+import com.yzq.net.HttpClient;
 import com.yzq.zxinglibrary.android.CaptureActivity;
 import com.yzq.zxinglibrary.bean.ZxingConfig;
 import com.yzq.zxinglibrary.common.Constant;
@@ -37,37 +41,38 @@ import java.util.List;
 public class MainActivity extends AppCompatActivity implements View.OnClickListener {
 
     private Button scanBtn;
-    private TextView result;
-    private EditText contentEt;
-    private Button encodeBtn;
-    private ImageView contentIv;
+    private ImageView iv_refresh_blue;
+    private TextView result, tv_connecting;
     private Toolbar toolbar;
+
+    private boolean flag_connect_successfully = false;
     private int REQUEST_CODE_SCAN = 111;
-    /**
-     * 生成带logo的二维码
-     */
-    private Button encodeBtnWithLogo;
-    private ImageView contentIvWithLogo;
-    private String contentEtString;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         initView();
+        inquiryServer();
     }
 
+    private void inquiryServer(){
+        HttpClient client = new HttpClient();
+        client.doGet();
+    }
 
     private void initView() {
         /*扫描按钮*/
         scanBtn = findViewById(R.id.scanBtn);
         scanBtn.setEnabled(false);
         scanBtn.setOnClickListener(this);
-        /*扫描结果*/
+
+        iv_refresh_blue = findViewById(R.id.iv_refresh_blue);
+
+        tv_connecting = findViewById(R.id.tv_connecting);
+
         result = findViewById(R.id.result);
-
         toolbar = findViewById(R.id.toolbar);
-
         toolbar.setTitle("二维码小游戏");
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
@@ -76,6 +81,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         toolbar = (Toolbar) findViewById(R.id.toolbar);
         result = (TextView) findViewById(R.id.result);
         scanBtn = (Button) findViewById(R.id.scanBtn);
+
+        setMyAnimation();
+        startTextAnimation();
     }
 
     @Override
@@ -138,4 +146,51 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         }
     }
 
+    private void setMyAnimation(){
+        Animation anima_rotate_round= AnimationUtils.loadAnimation(this, R.anim.rotate);
+        if(anima_rotate_round != null){
+            anima_rotate_round.setInterpolator(new LinearInterpolator());
+            iv_refresh_blue.startAnimation(anima_rotate_round);
+        }
+    }
+
+    private void startTextAnimation(){
+        new Thread(){
+            private int i = 0;
+            private String[] texts = {"正在连接到服务器", "正在连接到服务器.","正在连接到服务器..","正在连接到服务器..."};
+            @Override
+            public void run() {
+                super.run();
+                while(!flag_connect_successfully){
+                    mySleep();
+                    i_increase();
+                    runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            tv_connecting.setText(texts[i]);
+                        }
+                    });
+
+                }
+            }
+
+            private void mySleep(){
+                try{
+                    sleep(500);
+                }catch (InterruptedException e){
+                    e.printStackTrace();
+                }
+            }
+
+            private void i_increase(){
+                if(i < 3){
+                    i++;
+                }else{
+                    i = 0;
+                }
+
+            }
+        }.start();
+
+    }
 }
