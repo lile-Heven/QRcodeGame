@@ -1,4 +1,8 @@
-# zxing
+
+# QRcodeGame
+This project can scans QRcode.
+
+lib:zxing
 一句话依赖就能实现扫一扫功能，包含闪光灯开关，选取本地图片解析，生成二维码(可带logo)功能等。
 
 更新日志：
@@ -162,3 +166,4 @@ startActivityForResult(intent, REQUEST_CODE_SCAN);
 
 ok,搞定了，就是这么简单，如果你觉得还行的话，麻烦给个start呦，有什么问题和建议直接提Issues,谢谢。
 --------------------------
+
