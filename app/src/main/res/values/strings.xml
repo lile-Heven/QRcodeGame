@@ -7,4 +7,10 @@
     <string name="bt_scan">  扫 一 扫  </string>
     <string name="tv_connecting">正在连接到服务器...</string>
 
+    <string name="code_quit">网络连接异常禁止运行</string>
+
+    <string name="tv_infos">服务器软件已更新，是否下载安装？</string>
+    <string name="tv_dialog_positive">是</string>
+    <string name="tv_dialog_negative">否</string>
+
 </resources>

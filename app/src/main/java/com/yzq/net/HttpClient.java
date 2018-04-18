@@ -1,7 +1,11 @@
 package com.yzq.net;
 
+import android.app.Application;
+import android.os.Handler;
+import android.os.Message;
 import android.util.Log;
 
+import com.yzq.app.MyApplication;
 import com.yzq.util.MyXmlParser;
 
 import java.io.BufferedReader;
@@ -18,19 +22,74 @@ import java.net.URL;
 
 public class HttpClient{
 
-    String urlStr = "http://www.bachinmaker.com/api/write/ver.php";
+    private static HttpClient SINGLE;
 
-    public HttpClient(){
+    private HttpClient(){
     }
 
-    public  void doGet(){
+    public static HttpClient getSingleInstance(){
+        if(HttpClient.SINGLE != null){
+            return SINGLE;
+        }else{
+            HttpClient.SINGLE = new HttpClient();
+            return SINGLE;
+        }
+    }
+
+    public  void doGet(final Handler handler, final String urlStr){
         new Thread(){
             @Override
             public void run() {
                 super.run();
+                if(!MyApplication.ver.equals(getVersion())){
+                    handler.sendEmptyMessage(0);
+                }
+            }
+
+            private String getVersion(){
                 HttpURLConnection conn = null;
                 InputStream is = null;
-                String resultData = "";
+                try{
+                    URL url = new URL(urlStr);
+                    conn = (HttpURLConnection) url.openConnection();
+                    conn.setRequestMethod("GET");
+                    if(conn.getResponseCode() == 200){
+                        Log.d("findbugs", "into conn.getResponseCode() == 200");
+                        is = conn.getInputStream();
+                        handler.sendEmptyMessage(1);
+                        MyXmlParser mParser = new MyXmlParser();
+                        String ver = null;
+                        if((ver = mParser.getDataFromXML(is, "ver")) != null){
+                            return ver;
+                        }else{
+                            Message msg =new Message();
+                            msg.what = 1;
+                            msg.obj = "读取到ver值为null";
+                            handler.sendMessage(msg);
+
+                        }
+                    }
+                }catch (MalformedURLException e){
+                    e.printStackTrace();
+                }catch (IOException e){
+                    e.printStackTrace();
+                }
+                handler.sendEmptyMessage(9);
+                return null;
+            }
+        }.start();
+    }
+    public  void doGet2(final Handler handler, final String urlStr){
+        new Thread(){
+            @Override
+            public void run() {
+                super.run();
+                getWriteText();
+            }
+
+            private void getWriteText(){
+                HttpURLConnection conn = null;
+                InputStream is = null;
                 try{
                     URL url = new URL(urlStr);
                     conn = (HttpURLConnection) url.openConnection();
@@ -39,19 +98,15 @@ public class HttpClient{
                         Log.d("findbugs", "into conn.getResponseCode() == 200");
                         is = conn.getInputStream();
                         MyXmlParser mParser = new MyXmlParser();
-                        boolean verRight = mParser.getDataFromXML(is);
-
-                        /*InputStreamReader isr = new InputStreamReader(is);
-                        BufferedReader br = new BufferedReader(isr);
-                        String inputLine = "";
-                        while((inputLine = br.readLine()) != null){
-                            Log.d("findbugs", "into (inputLine = br.readLine()) != null");
-                            resultData += inputLine + "\n";
-                            Log.d("findbugs", "inputLine:" + inputLine);
+                        String writeText = null;
+                        if((writeText = mParser.getDataFromXML(is, "string")) != null){
+                            Message msg = new Message();
+                            msg.what = 4;
+                            msg.obj = writeText;
+                            handler.sendMessage(msg);
+                        }else{
+                            handler.sendEmptyMessage(3);
                         }
-                        System.out.println("GET请求获取的内容：" + resultData);
-                        */
-
                     }
                 }catch (MalformedURLException e){
                     e.printStackTrace();
@@ -61,6 +116,7 @@ public class HttpClient{
             }
         }.start();
     }
+
     public  void doPost(){
     }
 }

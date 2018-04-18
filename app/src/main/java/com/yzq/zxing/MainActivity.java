@@ -2,32 +2,32 @@ package com.yzq.zxing;
 
 import android.content.Intent;
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Message;
 import android.provider.Settings;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.text.TextUtils;
 import android.view.View;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.view.animation.LinearInterpolator;
 import android.widget.Button;
-import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.google.zxing.WriterException;
 import com.yanzhenjie.permission.Action;
 import com.yanzhenjie.permission.AndPermission;
 import com.yanzhenjie.permission.Permission;
 import com.yzq.net.HttpClient;
+import com.yzq.net.MyAsyncTask;
+import com.yzq.util.ToastUtil;
+import com.yzq.view.BottomDialog;
 import com.yzq.zxinglibrary.android.CaptureActivity;
 import com.yzq.zxinglibrary.bean.ZxingConfig;
 import com.yzq.zxinglibrary.common.Constant;
-import com.yzq.zxinglibrary.encode.CodeCreator;
 
 import java.util.List;
 
@@ -44,6 +44,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private ImageView iv_refresh_blue;
     private TextView result, tv_connecting;
     private Toolbar toolbar;
+    private static Handler handler;
 
     private boolean flag_connect_successfully = false;
     private int REQUEST_CODE_SCAN = 111;
@@ -52,13 +53,60 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        initHandler();
         initView();
         inquiryServer();
     }
 
     private void inquiryServer(){
-        HttpClient client = new HttpClient();
-        client.doGet();
+        HttpClient.getSingleInstance().doGet(handler, "http://www.bachinmaker.com/api/write/ver.php");
+    }
+
+    private void initHandler(){
+        handler = new Handler(){
+            @Override
+            public void handleMessage(Message msg) {
+                super.handleMessage(msg);
+                switch (msg.what){
+                    case 0:
+                        BottomDialog mDialog = new BottomDialog(MainActivity.this);
+                        mDialog.show();
+                        break;
+
+                    case 1:
+                        if(msg.obj == null){
+                            iv_refresh_blue.clearAnimation();
+                            iv_refresh_blue.setVisibility(View.GONE);
+                            flag_connect_successfully = true;
+                            tv_connecting.setVisibility(View.GONE);
+                            scanBtn.setEnabled(true);
+                        }else{
+                            if(msg.obj instanceof String){
+                                ToastUtil.showTexts(MainActivity.this,
+                                        (String)msg.obj, false);
+                                MainActivity.this.finish();
+                            }
+                        }
+                        break;
+                    case 9:
+                        ToastUtil.showTexts(MainActivity.this,
+                                MainActivity.this.getResources().getString(R.string.code_quit), false);
+                        MainActivity.this.finish();
+                        break;
+
+
+                    case 3:
+                        result.setText("服务器开了个小差");
+                        ToastUtil.showTexts(MainActivity.this,
+                                "服务器开了个小差", true);
+                        break;
+                    case 4:
+                        Intent intent = new Intent(MainActivity.this,TextActivity.class);
+                        startActivity();
+                        break;
+                }
+            }
+        };
     }
 
     private void initView() {
@@ -139,12 +187,25 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         // 扫描二维码/条码回传
         if (requestCode == REQUEST_CODE_SCAN && resultCode == RESULT_OK) {
             if (data != null) {
-
-                String content = data.getStringExtra(Constant.CODED_CONTENT);
-                result.setText("扫描结果为：" + content);
+                String idString = data.getStringExtra(Constant.CODED_CONTENT);
+                result.setText("扫描结果为：" + idString);
+                //http://www.bachinmaker.com/api/write/get.php?id=idString
+                getWriteText(idString);
             }
         }
     }
+
+    private void getWriteText(String idString){
+        HttpClient.getSingleInstance().doGet2(handler, "http://www.bachinmaker.com/api/write/get.php?id="+idString);
+    }
+
+    public void downloadNewApk(){
+        String url_download = "http://www.bachinmaker.com/api/write/write.apk";
+        new MyAsyncTask(this)
+                .execute(url_download);//这里写你的apk url地址
+    }
+
+
 
     private void setMyAnimation(){
         Animation anima_rotate_round= AnimationUtils.loadAnimation(this, R.anim.rotate);

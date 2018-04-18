@@ -18,7 +18,7 @@ import java.io.InputStream;
 
 public class MyXmlParser {
 
-    public boolean getDataFromXML(InputStream is){
+    public String getDataFromXML(InputStream is, String tagNameDestination){
         XmlPullParser parser = Xml.newPullParser();
         try{
             parser.setInput(is, "utf-8");
@@ -27,11 +27,10 @@ public class MyXmlParser {
                 if(eventType == XmlPullParser.START_TAG){
                      String tagName = parser.getName();
                      if(tagName != null){
-                         if(tagName.equals("ver")){
-                             String ver = parser.nextText();
-                             Log.d("findbugs", "ver:"+ver);
-                             Log.d("findbugs", "asserts ver.equals(1.0):"+ ver.equals(MyApplication.ver));
-                             return ver.equals(MyApplication.ver);
+                         if(tagName.equals(tagNameDestination)){
+                             String data = parser.nextText();
+                             Log.d("findbugs", "ver:"+data);
+                             return data;
                          }
                      }
                 }
@@ -42,8 +41,7 @@ public class MyXmlParser {
         }catch (IOException e){
             e.printStackTrace();
         }
-
-        return false;
+        return null;
     }
 
 }
