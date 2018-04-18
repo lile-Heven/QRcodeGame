@@ -3,4 +3,8 @@
     <string name="title_home">Home</string>
     <string name="title_dashboard">Dashboard</string>
     <string name="title_notifications">Notifications</string>
+
+    <string name="bt_scan">  扫 一 扫  </string>
+    <string name="tv_connecting">正在连接到服务器...</string>
+
 </resources>

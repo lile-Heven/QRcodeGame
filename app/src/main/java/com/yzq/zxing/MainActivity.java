@@ -66,17 +66,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         /*扫描结果*/
         result = findViewById(R.id.result);
 
-        /*要生成二维码的输入框*/
-        contentEt = findViewById(R.id.contentEt);
-        /*生成按钮*/
-        encodeBtn = findViewById(R.id.encodeBtn);
-        encodeBtn.setOnClickListener(this);
-        /*生成的图片*/
-        contentIv = findViewById(R.id.contentIv);
-
         toolbar = findViewById(R.id.toolbar);
 
-        toolbar.setTitle("扫一扫");
+        toolbar.setTitle("二维码小游戏");
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
@@ -84,12 +76,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         toolbar = (Toolbar) findViewById(R.id.toolbar);
         result = (TextView) findViewById(R.id.result);
         scanBtn = (Button) findViewById(R.id.scanBtn);
-        contentEt = (EditText) findViewById(R.id.contentEt);
-        encodeBtnWithLogo = (Button) findViewById(R.id.encodeBtnWithLogo);
-        encodeBtnWithLogo.setOnClickListener(this);
-        contentIvWithLogo = (ImageView) findViewById(R.id.contentIvWithLogo);
-        encodeBtn = (Button) findViewById(R.id.encodeBtn);
-        contentIv = (ImageView) findViewById(R.id.contentIv);
     }
 
     @Override
@@ -133,48 +119,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                         }).start();
 
                 break;
-            case R.id.encodeBtn:
-                contentEtString = contentEt.getText().toString().trim();
-                if (TextUtils.isEmpty(contentEtString)) {
-                    Toast.makeText(this, "请输入要生成二维码图片的字符串", Toast.LENGTH_SHORT).show();
-                    return;
-                }
-
-
-                try {
-                    bitmap = CodeCreator.createQRCode(contentEtString, 400, 400, null);
-
-                } catch (WriterException e) {
-                    e.printStackTrace();
-                }
-                if (bitmap != null) {
-                    contentIv.setImageBitmap(bitmap);
-                }
-
-                break;
-
-            case R.id.encodeBtnWithLogo:
-
-                contentEtString = contentEt.getText().toString().trim();
-                if (TextUtils.isEmpty(contentEtString)) {
-                    Toast.makeText(this, "请输入要生成二维码图片的字符串", Toast.LENGTH_SHORT).show();
-                    return;
-                }
-
-                bitmap = null;
-                try {
-                    Bitmap logo = BitmapFactory.decodeResource(getResources(), R.mipmap.ic_launcher);
-                    bitmap = CodeCreator.createQRCode(contentEtString, 400, 400, logo);
-
-                } catch (WriterException e) {
-                    e.printStackTrace();
-                }
-                if (bitmap != null) {
-                    contentIvWithLogo.setImageBitmap(bitmap);
-                }
-
-                break;
-
             default:
         }
     }
