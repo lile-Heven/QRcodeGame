@@ -51,6 +51,8 @@ public class BottomDialog extends Dialog implements View.OnClickListener{
         lp.y = 20;//设置Dialog距离底部的距离
         //将属性设置给窗体
         dialogWindow.setAttributes(lp);
+        this.setCanceledOnTouchOutside(false);
+        this.setCancelable(false);
     }
 
     @Override
@@ -61,7 +63,7 @@ public class BottomDialog extends Dialog implements View.OnClickListener{
                 ((MainActivity)context).downloadNewApk();
                 break;
             case R.id.choosePhoto:
-                ToastUtil.showTexts(context,"sorry,非最新版无法运行",true);
+                ToastUtil.showTexts(context,"Sorry，非最新版无法运行",true);
                 ((MainActivity)context).finish();
                 break;
         }

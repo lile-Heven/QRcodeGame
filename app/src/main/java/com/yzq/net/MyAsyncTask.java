@@ -1,5 +1,6 @@
 package com.yzq.net;
 
+import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
@@ -114,13 +115,14 @@ public class MyAsyncTask extends AsyncTask<String, Integer, String> {
         super.onProgressUpdate(progress);
         if(progress[0] == -1){
             ToastUtil.showTexts(context,"url可能有误",true);
-            return;
+            ((Activity)context).finish();
         }else if(progress[0] == 101){
             ToastUtil.showTexts(context,"下载完成",true);
-            return;
+            //return;
+        }else{
+            progressDialog.setProgress(progress[0]);
         }
         Log.d("findbugs", "into onProgressUpdate");
-        progressDialog.setProgress(progress[0]);
     }
 
     @Override
@@ -136,6 +138,7 @@ public class MyAsyncTask extends AsyncTask<String, Integer, String> {
             Intent intent = new Intent(Intent.ACTION_VIEW);
             intent.setDataAndType(Uri.fromFile(file), "application/vnd.android.package-archive");
             context.startActivity(intent);
+            ((Activity)context).finish();
         }
 
     }

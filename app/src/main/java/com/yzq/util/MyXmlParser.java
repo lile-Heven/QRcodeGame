@@ -29,7 +29,7 @@ public class MyXmlParser {
                      if(tagName != null){
                          if(tagName.equals(tagNameDestination)){
                              String data = parser.nextText();
-                             Log.d("findbugs", "ver:"+data);
+                             Log.d("findbugs", tagNameDestination + ":"+data);
                              return data;
                          }
                      }

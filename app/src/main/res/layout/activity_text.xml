@@ -6,6 +6,7 @@
     android:orientation="vertical"
     tools:context="com.yzq.zxing.TextActivity">
 
+    <!-- TODO adaptation -->
     <android.support.design.widget.AppBarLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -26,29 +27,89 @@
         android:layout_marginTop="10dp"
         android:layout_marginBottom="10dp"
         android:orientation="vertical">
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_weight="6">
-
-        </LinearLayout>
         <RelativeLayout
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_weight="3">
+            android:layout_height="30dp"
+            android:layout_marginTop="10dp"
+            >
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:text="Text1"
+                android:textSize="25dp"
+                />
 
         </RelativeLayout>
-        <LinearLayout
+        <RelativeLayout
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_weight="6">
+            android:layout_height="60dp"
+            android:layout_marginTop="5dp"
+            >
 
-        </LinearLayout>
-        <LinearLayout
+            <TextView
+                android:id="@+id/tv_char"
+                android:layout_width="60dp"
+                android:layout_height="60dp"
+                android:layout_centerHorizontal="true"
+                android:layout_centerVertical="true"
+                android:textSize="50dp"
+                android:layout_centerInParent="true"
+                android:background="@color/LightBlue" />
+
+        </RelativeLayout>
+        <RelativeLayout
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_weight="3">
+            android:layout_height="60dp"
+            android:layout_marginTop="5dp"
+            >
 
-        </LinearLayout>
+            <TextView
+                android:id="@+id/tv_result_textactivity"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:text="服务器返回："
+                android:textSize="25dp" />
+        </RelativeLayout>
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="240dp"
+            android:layout_marginTop="10dp"
+            >
+            <ImageView
+                android:id="@+id/iv_image"
+                android:layout_width="240dp"
+                android:layout_height="240dp"
+                android:layout_centerVertical="true"
+                android:layout_centerHorizontal="true"
+                android:background="@color/colorAccent"
+                />
+        </RelativeLayout>
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="80dp"
+            android:layout_marginTop="15dp"
+            >
+            <Button
+                android:id="@+id/bt_eraser"
+                android:layout_centerVertical="true"
+                android:layout_alignParentLeft="true"
+                android:layout_marginLeft="30dp"
+                android:layout_width="64dp"
+                android:layout_height="64dp"
+                android:background="@drawable/icon_eraser"
+                />
+
+            <Button
+                android:id="@+id/bt_ok"
+                android:layout_centerVertical="true"
+                android:layout_alignParentRight="true"
+                android:layout_marginRight="30dp"
+                android:layout_width="64dp"
+                android:layout_height="64dp"
+                android:background="@drawable/icon_ok"
+                />
+
+        </RelativeLayout>
     </LinearLayout>
 </LinearLayout>

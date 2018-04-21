@@ -9,6 +9,7 @@ import android.os.Message;
 import android.provider.Settings;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.View;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
@@ -21,6 +22,7 @@ import android.widget.Toast;
 import com.yanzhenjie.permission.Action;
 import com.yanzhenjie.permission.AndPermission;
 import com.yanzhenjie.permission.Permission;
+import com.yzq.app.MyApplication;
 import com.yzq.net.HttpClient;
 import com.yzq.net.MyAsyncTask;
 import com.yzq.util.ToastUtil;
@@ -40,6 +42,8 @@ import java.util.List;
 
 public class MainActivity extends AppCompatActivity implements View.OnClickListener {
 
+    private String idString;
+    public final static String tagIdString = "idString";
     private Button scanBtn;
     private ImageView iv_refresh_blue;
     private TextView result, tv_connecting;
@@ -102,7 +106,10 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                         break;
                     case 4:
                         Intent intent = new Intent(MainActivity.this,TextActivity.class);
-                        startActivity();
+                        intent.putExtra(MyApplication.writeText, (String)msg.obj);
+                        intent.putExtra(MainActivity.tagIdString, idString);
+                        Log.d("findbugs", "into MainActivity handleMsg 4");
+                        startActivity(intent);
                         break;
                 }
             }
@@ -187,7 +194,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         // 扫描二维码/条码回传
         if (requestCode == REQUEST_CODE_SCAN && resultCode == RESULT_OK) {
             if (data != null) {
-                String idString = data.getStringExtra(Constant.CODED_CONTENT);
+                idString = data.getStringExtra(Constant.CODED_CONTENT);
                 result.setText("扫描结果为：" + idString);
                 //http://www.bachinmaker.com/api/write/get.php?id=idString
                 getWriteText(idString);
